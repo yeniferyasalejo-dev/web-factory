@@ -493,7 +493,9 @@ async function runGeneration() {
 
   // load the real site in iframe
   const frame = document.getElementById('siteFrame');
+  frame.removeAttribute('srcdoc');
   frame.src = 'https://www.lcdo.com.co/';
+  document.querySelector('.purl').textContent = '🔒 https://lcdo.com.co';
 
   // detect if iframe is blocked (X-Frame-Options) after 3s
   let iframeLoaded = false;
@@ -556,13 +558,135 @@ async function runAutoDemo() {
 
 // ── MANUAL MODE ───────────────────────────────────────────────
 let manStep = 0;
+const userData = { nombre:'', correo:'', ciudad:'', objetivo:'', referencia:'', servicios:'' };
+
 const MANUAL = [
-  { text:'Perfecto ✅ ¿En qué <b>ciudad y país</b> opera el negocio?' },
-  { text:'¿Cuál es el <b>objetivo principal</b> de tu web?', qrs:['🎯 Conseguir clientes','🛒 Vender online','📋 Mostrar catálogo','🏢 Presencia de marca'] },
-  { text:'¿URL de un sitio cuyo <b>diseño te guste</b>?' },
-  { text:'🧠 Analizando tu referencia...<br>✅ Paleta y estructura detectadas.<br><br>¿Cuáles son tus <b>3–5 servicios principales</b>?' },
+  { text:'Perfecto ✅ ¿En qué <b>ciudad y país</b> opera el negocio?', save:'ciudad' },
+  { text:'¿Cuál es el <b>objetivo principal</b> de tu web?', qrs:['🎯 Conseguir clientes','🛒 Vender online','📋 Mostrar catálogo','🏢 Presencia de marca'], save:'objetivo' },
+  { text:'¿URL de un sitio cuyo <b>diseño te guste</b>?', save:'referencia' },
+  { text:'🧠 Analizando tu referencia...<br>✅ Paleta y estructura detectadas.<br><br>¿Cuáles son tus <b>3–5 servicios principales</b>?', save:'servicios' },
   { text:'🎉 <b>Resumen listo.</b> ¿Arrancamos? 🚀', qrs:['✅ ¡Generar mi sitio!','✏️ Ajustar algo'], confirm:true },
 ];
+
+function parseNameEmail(val) {
+  const parts = val.split(/[—–,]/);
+  userData.nombre = (parts[0]||'').trim();
+  userData.correo = (parts[1]||'').trim().replace(/\s/g,'');
+  if (!userData.correo.includes('@')) userData.correo = 'contacto@' + userData.nombre.toLowerCase().replace(/\s+/g,'') + '.com';
+}
+
+function buildUserSite() {
+  const n = userData.nombre || 'Mi Empresa';
+  const c = userData.ciudad || 'Colombia';
+  const initials = n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const svcs = userData.servicios ? userData.servicios.split(/[,\n]/).map(s=>s.trim()).filter(Boolean) : ['Servicio 1','Servicio 2','Servicio 3'];
+  const icons = ['✨','🚀','⚡','🎯','🔧','💡'];
+  const colors = ['#3B82F6','#8B5CF6','#10B981','#F59E0B','#EF4444','#06B6D4'];
+  const obj = userData.objetivo.replace(/[🎯🛒📋🏢]\s*/,'') || 'Presencia online';
+  const svcCards = svcs.slice(0,4).map((s,i) => `<div style="background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px;text-align:center"><div style="font-size:28px;margin-bottom:8px">${icons[i%6]}</div><div style="font-size:14px;font-weight:700;color:#111827">${s}</div></div>`).join('');
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;color:#111827;background:#fff}</style></head><body>
+<nav style="background:#fff;border-bottom:1px solid #E5E7EB;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:32px;height:32px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:900">${initials}</div>
+    <div style="font-size:15px;font-weight:800;color:#111827">${n}</div>
+  </div>
+  <div style="display:flex;gap:20px;font-size:12px;font-weight:600;color:#6B7280">
+    <span>Servicios</span><span>Contacto</span>
+  </div>
+</nav>
+<div style="background:linear-gradient(135deg,#EFF6FF 0%,#F9FAFB 100%);padding:64px 24px;text-align:center">
+  <div style="display:inline-block;background:#DBEAFE;color:#1D4ED8;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;margin-bottom:16px">${c}</div>
+  <h1 style="font-size:36px;font-weight:900;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px">${n}</h1>
+  <p style="font-size:14px;color:#6B7280;max-width:420px;margin:0 auto 24px;line-height:1.6">${obj}. Soluciones profesionales para tu negocio.</p>
+  <div style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">💬 Escríbenos por WhatsApp</div>
+</div>
+<div style="padding:48px 24px;max-width:600px;margin:0 auto">
+  <div style="text-align:center;margin-bottom:28px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#3B82F6;margin-bottom:6px">Nuestros servicios</div>
+    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.5px">Lo que hacemos</h2>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">${svcCards}</div>
+</div>
+<div style="background:#F9FAFB;border-top:1px solid #E5E7EB;padding:40px 24px;text-align:center">
+  <h2 style="font-size:20px;font-weight:800;margin-bottom:8px">¿Listo para empezar?</h2>
+  <p style="font-size:13px;color:#6B7280;margin-bottom:20px">Contáctanos hoy y recibe atención personalizada.</p>
+  <div style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700">💬 WhatsApp</div>
+  <div style="font-size:12px;color:#9CA3AF;margin-top:10px">${userData.correo || 'contacto@empresa.com'}</div>
+</div>
+<footer style="background:#111827;padding:20px 24px;display:flex;justify-content:space-between;align-items:center">
+  <div style="font-size:12px;font-weight:700;color:#374151">${n.toUpperCase()}</div>
+  <div style="font-size:10px;color:#374151">© 2026 · ${c}</div>
+  <div style="font-size:9px;color:#065F46;font-weight:700;opacity:.6">⚡ WEB FACTORY</div>
+</footer>
+</body></html>`;
+}
+
+async function runManualGeneration() {
+  document.getElementById('livePill').style.display = 'flex';
+  showOnly('pProg');
+  const IDS = ['s1','s2','s3','s4','s5','s6'];
+  const PCT = [15,30,52,68,84,100];
+  const bar = document.getElementById('pbar');
+  for (let i = 0; i < IDS.length; i++) {
+    document.getElementById(IDS[i]).className = 'step run';
+    bar.style.width = (PCT[i]-12)+'%';
+    await sleep(1350);
+    document.getElementById(IDS[i]).className = 'step done';
+    bar.style.width = PCT[i]+'%';
+    await sleep(150);
+  }
+  await sleep(600);
+  document.getElementById('livePill').style.display = 'none';
+
+  const frame = document.getElementById('siteFrame');
+  const domain = userData.nombre.toLowerCase().replace(/\s+/g,'') + '.com';
+  document.querySelector('.purl').textContent = '🔒 https://' + domain;
+  frame.srcdoc = buildUserSite();
+  frame.style.display = '';
+  document.querySelector('.gs').style.display = 'none';
+
+  // update data panel
+  const dc = document.querySelectorAll('.dc');
+  if (dc[0]) dc[0].innerHTML = `<h4>Datos del cliente</h4>
+    <div class="dr"><span class="k">Empresa</span><span class="v">${userData.nombre}</span></div>
+    <div class="dr"><span class="k">Correo</span><span class="v">${userData.correo}</span></div>
+    <div class="dr"><span class="k">Ciudad / País</span><span class="v">${userData.ciudad}</span></div>`;
+  if (dc[1]) dc[1].innerHTML = `<h4>Especificaciones</h4>
+    <div class="dr"><span class="k">Objetivo</span><span class="v"><span class="tg tg-b">${userData.objetivo}</span></span></div>
+    <div class="dr"><span class="k">Referencia visual</span><span class="v">${userData.referencia}</span></div>
+    <div class="dr"><span class="k">Template</span><span class="v"><span class="tg tg-g">Profesional Light</span></span></div>`;
+
+  showOnly(activeTab === 'data' ? 'pData' : 'pSite');
+  addMsg('b', '🎉 <b>¡Tu sitio está listo!</b><br><br>🌐 <b>' + domain + '</b> está en vivo con SSL activo.<br>Puedes verlo en el panel derecho 👉<br><br>¿Quieres ajustar algo? Solo dime.');
+  enableIn('Ej: Cambiar colores, mover sección...');
+  document.getElementById('btnAuto').disabled = false;
+  document.getElementById('btnAuto').textContent = '▶ Demo otra vez';
+}
+
+function showBotStep(step) {
+  setTimeout(() => {
+    const t = showTyping();
+    setTimeout(() => {
+      t.remove();
+      addMsg('b', step.text);
+      if (step.qrs) {
+        addQRs(step.qrs, sel => {
+          addMsg('u', sel);
+          if (step.save) userData[step.save] = sel;
+          if (step.confirm) {
+            setTimeout(() => { addMsg('b','⚙️ <b>¡En marcha!</b> Generando tu sitio...'); runManualGeneration(); }, 500);
+          } else {
+            const next = MANUAL[manStep];
+            if (next) { showBotStep(next); manStep++; }
+          }
+        });
+      } else { enableIn(); }
+    }, 850);
+  }, 350);
+}
 
 function send() {
   const val = ciEl.value.trim();
@@ -570,22 +694,17 @@ function send() {
   ciEl.value = '';
   disableIn();
   addMsg('u', val);
-  const r = MANUAL[Math.min(manStep, MANUAL.length-1)];
+
+  if (manStep === 0) {
+    parseNameEmail(val);
+  } else {
+    const prev = MANUAL[manStep - 1];
+    if (prev && prev.save) userData[prev.save] = val;
+  }
+
+  const step = MANUAL[manStep];
   manStep++;
-  setTimeout(() => {
-    const t = showTyping();
-    setTimeout(() => {
-      t.remove();
-      addMsg('b', r.text);
-      if (r.qrs) {
-        addQRs(r.qrs, sel => {
-          addMsg('u', sel);
-          if (r.confirm) { setTimeout(() => { addMsg('b','⚙️ <b>¡En marcha!</b> Generando tu sitio...'); runGeneration(); }, 500); }
-          else { manStep++; enableIn(); }
-        });
-      } else { enableIn(); }
-    }, 850);
-  }, 350);
+  showBotStep(step);
 }
 
 // ── RESET ─────────────────────────────────────────────────────
@@ -594,6 +713,7 @@ function resetAll() {
   ciEl.value = '';
   disableIn();
   manStep = 0;
+  Object.keys(userData).forEach(k => userData[k] = '');
   document.getElementById('livePill').style.display = 'none';
   document.getElementById('btnAuto').disabled = false;
   document.getElementById('btnAuto').textContent = '▶ Demo automático';
@@ -602,7 +722,12 @@ function resetAll() {
   activeTab = 'site';
   document.getElementById('tab1').classList.add('on');
   document.getElementById('tab2').classList.remove('on');
-  document.getElementById('siteFrame').src = 'about:blank';
+  const sf = document.getElementById('siteFrame');
+  sf.removeAttribute('srcdoc');
+  sf.src = 'about:blank';
+  sf.style.display = '';
+  document.querySelector('.gs').style.display = 'none';
+  document.querySelector('.purl').textContent = '🔒 https://lcdo.com.co';
   showOnly('pIdle');
   initGreet();
 }

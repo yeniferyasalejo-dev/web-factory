@@ -299,64 +299,6 @@ footer{background:var(--gray-900);color:var(--gray-400);padding:64px 0 40px}
       <a href="#demo" class="btn-primary">Ver demo en vivo →</a>
       <a href="#pricing" class="btn-secondary">Ver planes</a>
     </div>
-    <div class="hero-pills">
-      <div class="pill"><div class="dot" style="background:var(--seafoam-600)"></div>Cloudflare Pages</div>
-      <div class="pill"><div class="dot" style="background:var(--blue-600)"></div>Claude Sonnet API</div>
-      <div class="pill"><div class="dot" style="background:var(--orange-500)"></div>GitHub auto-deploy</div>
-      <div class="pill"><div class="dot" style="background:var(--blue-500)"></div>Telegram + WhatsApp</div>
-    </div>
-
-    <!-- hero window -->
-    <div class="hero-window">
-      <div class="hw-bar">
-        <div class="hw-dots">
-          <div class="hw-dot" style="background:#FF5F57"></div>
-          <div class="hw-dot" style="background:#FFBD2E"></div>
-          <div class="hw-dot" style="background:#28C840"></div>
-        </div>
-        <div class="hw-url">webfactory.io — Demo en vivo</div>
-      </div>
-      <div class="hw-body">
-        <div class="hw-chat">
-          <div class="hw-msg b" style="animation-delay:.1s">👋 ¡Hola! Soy el bot de <strong>Web Factory</strong>. ¿Cuál es el nombre de tu empresa y tu correo?</div>
-          <div class="hw-msg u" style="animation-delay:.6s">La Casa del Overhaul — ventas@lcdo.com.co</div>
-          <div class="hw-msg b" style="animation-delay:1.1s">Perfecto ✅ ¿Cuál es el objetivo principal de tu web?</div>
-          <div class="hw-msg u" style="animation-delay:1.6s">Mostrar catálogo de repuestos diésel</div>
-          <div class="hw-msg b" style="animation-delay:2.1s">🧠 Analizando referencia... ✅ Template: <strong>Industrial Bold</strong>. ¿Arrancamos?</div>
-          <div class="hw-msg u" style="animation-delay:2.6s">✅ ¡Generar mi sitio!</div>
-          <div class="hw-msg b" style="animation-delay:3.1s">⚙️ <strong>¡En marcha!</strong> 4 minutos aprox...</div>
-        </div>
-        <div class="hw-preview">
-          <div class="hw-pbar">
-            <div class="hw-pdots">
-              <div class="hw-pd" style="background:#FF5F57"></div>
-              <div class="hw-pd" style="background:#FFBD2E"></div>
-              <div class="hw-pd" style="background:#28C840"></div>
-            </div>
-            <div class="hw-purl">lcdo.com.co</div>
-            <span style="font-size:8px;font-weight:700;color:var(--seafoam-500);background:rgba(68,180,139,.15);padding:1px 6px;border-radius:8px">LIVE</span>
-          </div>
-          <div class="hw-site">
-            <div class="ms">
-              <div class="ms-nav">
-                <div class="ms-logo">La Casa del Overhaul</div>
-                <div class="ms-cta-btn">Cotizar →</div>
-              </div>
-              <div class="ms-hero">
-                <div class="ms-h1">Repuestos<br>Motor <span>Diésel</span></div>
-                <div class="ms-p">+8,000 referencias certificadas en Bogotá</div>
-                <div class="ms-stats">
-                  <div class="ms-stat"><div class="ms-stat-n">+30</div><div class="ms-stat-l">Años</div></div>
-                  <div class="ms-stat"><div class="ms-stat-n">+8K</div><div class="ms-stat-l">Refs</div></div>
-                  <div class="ms-stat"><div class="ms-stat-n">+25</div><div class="ms-stat-l">Marcas</div></div>
-                  <div class="ms-stat"><div class="ms-stat-n">24h</div><div class="ms-stat-l">Entrega</div></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -367,21 +309,21 @@ footer{background:var(--gray-900);color:var(--gray-400);padding:64px 0 40px}
     <h2 class="section-heading">Del chat al sitio en vivo,<br>sin intervención manual.</h2>
     <div class="how-grid">
       <div class="how-steps">
-        <div class="how-step active" onclick="setStep(0)">
+        <div class="how-step active" onclick="setStep(0,true)">
           <div class="hs-num">1</div>
           <div class="hs-content">
             <div class="hs-title">Intake conversacional</div>
             <div class="hs-desc">El cliente escribe en WhatsApp o Telegram. El bot recoge nombre, objetivos, dominio, referencia visual y servicios — sin formularios, sin fricción.</div>
           </div>
         </div>
-        <div class="how-step" onclick="setStep(1)">
+        <div class="how-step" onclick="setStep(1,true)">
           <div class="hs-num">2</div>
           <div class="hs-content">
             <div class="hs-title">Pipeline automatizado</div>
             <div class="hs-desc">Claude API selecciona el template, genera el HTML completo e inyecta el contenido del cliente. GitHub recibe el commit y Cloudflare Pages despliega en segundos.</div>
           </div>
         </div>
-        <div class="how-step" onclick="setStep(2)">
+        <div class="how-step" onclick="setStep(2,true)">
           <div class="hs-num">3</div>
           <div class="hs-content">
             <div class="hs-title">Sitio listo y en vivo</div>
@@ -678,16 +620,17 @@ footer{background:var(--gray-900);color:var(--gray-400);padding:64px 0 40px}
 </footer>
 
 <script>
-function setStep(n) {
+let howTimer;
+function setStep(n, manual) {
+  currentStep = n;
   document.querySelectorAll('.how-step').forEach((el,i) => el.classList.toggle('active', i===n));
   document.querySelectorAll('.how-panel').forEach((el,i) => el.classList.toggle('active', i===n));
+  if (manual) { clearInterval(howTimer); howTimer = setInterval(autoNext, 10000); }
 }
+function autoNext() { currentStep = (currentStep + 1) % 3; setStep(currentStep); }
 
 let currentStep = 0;
-setInterval(() => {
-  currentStep = (currentStep + 1) % 3;
-  setStep(currentStep);
-}, 4000);
+howTimer = setInterval(autoNext, 10000);
 </script>
 
 </body>

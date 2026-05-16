@@ -465,7 +465,8 @@ function showTyping() {
   return w;
 }
 
-function enableIn(ph) { ciEl.disabled=false; sbEl.disabled=false; ciEl.placeholder=ph||'Escribe tu respuesta...'; ciEl.focus(); }
+let userInteracted = false;
+function enableIn(ph) { ciEl.disabled=false; sbEl.disabled=false; ciEl.placeholder=ph||'Escribe tu respuesta...'; if(userInteracted) ciEl.focus(); }
 function disableIn() { ciEl.disabled=true; sbEl.disabled=true; }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -534,6 +535,7 @@ const FLOW = [
 ];
 
 async function runAutoDemo() {
+  userInteracted = true;
   document.getElementById('btnAuto').disabled = true;
   msgsEl.innerHTML = '';
   disableIn();
@@ -744,6 +746,7 @@ async function initGreet() {
 // INIT
 showOnly('pIdle');
 initGreet();
+document.addEventListener('click', () => { userInteracted = true; }, { once: true });
 </script>
 </body>
 </html>

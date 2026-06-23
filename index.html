@@ -65,6 +65,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.85);backdrop-
 .nav-right{display:flex;align-items:center;gap:12px}
 .nav-cta{background:var(--blue-800);color:#fff;padding:9px 20px;border-radius:7px;font-size:13px;font-weight:600;text-decoration:none;transition:.2s}
 .nav-cta:hover{background:var(--blue-900)}
+.country-dd{position:relative}
+.country-btn{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--gray-500);cursor:pointer;padding:5px 0;border:none;background:none;font-family:inherit}
+.country-btn:hover{color:var(--gray-900)}
+.country-btn svg{width:12px;height:12px;transition:.2s}
+.country-dd:hover .country-btn svg{transform:rotate(180deg)}
+.country-menu{display:none;position:absolute;top:100%;right:0;background:#fff;border:1px solid var(--gray-200);border-radius:10px;box-shadow:0 8px 30px rgba(18,22,30,.1);min-width:200px;padding:6px;z-index:200;margin-top:8px}
+.country-dd:hover .country-menu{display:block}
+.country-menu a{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:13px;font-weight:500;color:var(--gray-700);text-decoration:none;border-radius:7px;transition:.15s}
+.country-menu a:hover{background:var(--gray-50);color:var(--gray-900)}
+.country-menu a .flag{font-size:18px}
+.country-menu a .loc{display:flex;flex-direction:column}
+.country-menu a .loc span{font-size:11px;color:var(--gray-400)}
 
 /* ── HERO ──────────────────────────────── */
 .hero{padding:80px 0 0;position:relative;overflow:hidden;background:#fff}
@@ -409,7 +421,19 @@ footer{background:var(--gray-900);color:var(--gray-400);padding:64px 0 40px}
         <a href="#demo">Demo</a>
         <a href="#sitios">Sitios</a>
         <a href="#pricing">Precios</a>
-        <a href="emprendedores.html" style="background:var(--blue-50);border:1px solid var(--blue-100);padding:5px 14px;border-radius:20px;color:var(--blue-600);font-weight:600">&#127468;&#127463; Emprendedores en Londres</a>
+        <div class="country-dd">
+          <button class="country-btn">&#127463;&#127476; Colombia <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5l3 3 3-3"/></svg></button>
+          <div class="country-menu">
+            <a href="#">
+              <span class="flag">&#127463;&#127476;</span>
+              <div class="loc">Colombia<span>Bogot&aacute; (actual)</span></div>
+            </a>
+            <a href="emprendedores.html">
+              <span class="flag">&#127468;&#127463;</span>
+              <div class="loc">Reino Unido<span>Londres</span></div>
+            </a>
+          </div>
+        </div>
       </div>
       <div class="nav-right">
         <a href="#demo" class="nav-cta">Ver demo →</a>
